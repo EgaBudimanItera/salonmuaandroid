@@ -144,12 +144,13 @@ class Laporan extends Component {
               <Icon name="print" />
               <Text>Cetak Laporan</Text>
             </Button>
-            {this.state.download === 2 && (
+            {
+              this.state.download === 2 && (
               <AndroidWebView
                 source={{
                   uri:
                     Server +
-                    "/cetak.php?dari=" +
+                    "cetak.php?dari=" +
                     this.state.date +
                     "&sampai=" +
                     this.state.date2 +

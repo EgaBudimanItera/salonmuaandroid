@@ -45,7 +45,9 @@ class Pemesanan extends Component {
     super(props);
     this.state = {
       dataPemesanan: [],
-      dataPemesananKonfirmasi: []
+      dataPemesananKonfirmasi: [],
+      loading: false,
+      loadingKonfirmasi: false,
     };
   }
 
@@ -57,7 +59,8 @@ class Pemesanan extends Component {
       )
       .then(respon => {
         this.setState({
-          dataPemesanan: respon.data
+          dataPemesanan: respon.data,
+          loading: false,
         });
       });
   };
@@ -70,36 +73,23 @@ class Pemesanan extends Component {
       )
       .then(respon => {
         this.setState({
-          dataPemesananKonfirmasi: respon.data
+          dataPemesananKonfirmasi: respon.data,
+          loadingKonfirmasi: false,
         });
       });
   };
 
   componentDidMount() {
+    this.setState({
+      loading: true,
+      loadingKonfirmasi: true
+    })
     this.getData();
     this.getDataKonfirmasi();
   }
 
   render() {
-    if (this.state.dataPemesanan.length === 0) {
-      return (
-        <View
-          style={{
-            flex: 1
-          }}
-        >
-          <View style={{ flex: 1 }}>
-            <HeaderPelanggan />
-          </View>
-          <View style={{ flex: 2 }}>
-            <View style={{ height: 1, backgroundColor: "#177ddb" }} />
-            <Text style={{ textAlign: "center", marginTop: 10 }}>
-              Anda Belum Mempunyai Pesanan
-            </Text>
-          </View>
-        </View>
-      );
-    }
+    console.log(this.state.dataPemesananKonfirmasi.length)
     return (
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
@@ -110,86 +100,138 @@ class Pemesanan extends Component {
           <Tabs>
             <Tab heading="Status Proses">
               <Content>
-                <List>
-                  {this.state.dataPemesanan.map((data, key) => {
-                    return (
-                      <ListItem thumbnail key={key}>
-                        <Left>
-                          <Thumbnail
-                            square
-                            source={{ uri: Server + "images/" + data.foto_jenis }}
-                          />
-                        </Left>
-                        <Body>
-                          <Text>{data.jasa}</Text>
-                          <Text note numberOfLines={1}>
-                            {data.nama}
-                          </Text>
-                          <Text note numberOfLines={1}>
-                            {data.alamat}
-                          </Text>
-                          <Text note numberOfLines={1}>
-                            {data.tanggal}
-                          </Text>
-                        </Body>
-                        <Right>
-                          <Button
-                            transparent
-                            onPress={() => {
-                              this.props.navigation.navigate("DetailPesanan", {
-                                id_order: data.id_order
-                              });
-                            }}
-                          >
-                            <Text>Lihat Pesanan</Text>
-                          </Button>
-                        </Right>
-                      </ListItem>
-                    );
-                  })}
-                </List>
+                {
+                  this.state.loading ? (
+                    <View
+                      style={{
+                        flex: 1,
+                        alignItems: "center",
+                        marginTop: Dimensions.get("window").height / 3.5
+                      }}
+                    >
+                      <Text style={{textAlign: "center"}}>Silahkan Tunggu </Text>
+            
+                      <ActivityIndicator
+                        style={{ marginTop: 20 }}
+                        size="large"
+                        color="#0000ff"
+                      />
+                    </View>
+                  ) : (
+                    this.state.dataPemesanan.length === 0  ? (
+                      <Text style={{ textAlign: "center", marginTop: 10 }}>
+                        Anda Belum Mempunyai Pesanan Yang Dikonfirmasi
+                      </Text>
+                    ) : (
+                      this.state.dataPemesanan.map((data, key) => {
+                        return (
+                        <List key={key}>  
+                        <ListItem thumbnail key={key}>
+                          <Left>
+                            <Thumbnail
+                              square
+                              source={{ uri: Server + "images/" + data.foto_jenis }}
+                            />
+                          </Left>
+                          <Body>
+                            <Text>{data.jasa}</Text>
+                            <Text note numberOfLines={1}>
+                              {data.nama}
+                            </Text>
+                            <Text note numberOfLines={1}>
+                              {data.alamat}
+                            </Text>
+                            <Text note numberOfLines={1}>
+                              {data.tanggal}
+                            </Text>
+                          </Body>
+                          <Right>
+                            <Button
+                              transparent
+                              onPress={() => {
+                                this.props.navigation.navigate("DetailPesanan", {
+                                  id_order: data.id_order
+                                });
+                              }}
+                            >
+                              <Text>Lihat Pesanan</Text>
+                            </Button>
+                          </Right>
+                        </ListItem>
+                        </List>
+                        )          
+                        })
+                    )
+                    )
+                  }
               </Content>
             </Tab>
             <Tab heading="Status Konfrimasi">
               <Content>
-                <List>
-                  {this.state.dataPemesananKonfirmasi.map((data, key) => {
-                    return (
-                      <ListItem thumbnail key={key}>
-                        <Left>
-                          <Thumbnail
-                            square
-                            source={{ uri: Server + "images/" + data.foto_jenis }}
-                          />
-                        </Left>
-                        <Body>
-                          <Text>{data.jasa}</Text>
-                          <Text note numberOfLines={1}>
-                            {data.nama}
-                          </Text>
-                          <Text note numberOfLines={1}>
-                            {data.alamat}
-                          </Text>
-                          <Text note numberOfLines={1}>
-                            {data.tanggal}
-                          </Text>
-                        </Body>
-                        <Right>
-                          <Button
-                            transparent
-                            onPress={() => {
-                              this.props.navigation.navigate("DetailPesanan", {
-                                id_order: data.id_order
-                              });
-                            }}
-                          >
-                            <Text>Lihat Pesanan</Text>
-                          </Button>
-                        </Right>
-                      </ListItem>
-                    );
-                  })}
-                </List>
+                {
+                  this.state.loadingKonfirmasi ? (
+                    <View
+                      style={{
+                        flex: 1,
+                        alignItems: "center",
+                        marginTop: Dimensions.get("window").height / 3.5
+                      }}
+                    >
+                      <Text style={{textAlign: "center"}}>Silahkan Tunggu </Text>
+            
+                      <ActivityIndicator
+                        style={{ marginTop: 20 }}
+                        size="large"
+                        color="#0000ff"
+                      />
+                    </View>
+                  ) : (  
+                    this.state.dataPemesananKonfirmasi.length === 0  ? (
+                      <Text style={{ textAlign: "center", marginTop: 10 }}>
+                        Anda Belum Mempunyai Pesanan Yang Dikonfirmasi
+                      </Text>
+                    ) : (
+                      this.state.dataPemesananKonfirmasi.map((data, key) => {     
+                          return (
+                            <List key={key}>  
+                            <ListItem thumbnail key={key}>
+                              <Left>
+                                <Thumbnail
+                                  square
+                                  source={{ uri: Server + "images/" + data.foto_jenis }}
+                                />
+                              </Left>
+                              <Body>
+                                <Text>{data.jasa}</Text>
+                                <Text note numberOfLines={1}>
+                                  {data.nama}
+                                </Text>
+                                <Text note numberOfLines={1}>
+                                  {data.alamat}
+                                </Text>
+                                <Text note numberOfLines={1}>
+                                  {data.tanggal}
+                                </Text>
+                              </Body>
+                              <Right>
+                                <Button
+                                  transparent
+                                  onPress={() => {
+                                    this.props.navigation.navigate("DetailPesanan", {
+                                      id_order: data.id_order
+                                    });
+                                  }}
+                                >
+                                  <Text>Lihat Pesanan</Text>
+                                </Button>
+                              </Right>
+                            </ListItem>
+                            </List>   
+                            )
+                        })
+                    )
+                    )
+                  }
               </Content>
             </Tab>
           </Tabs>

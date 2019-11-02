@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions, ActivityIndicator } from "react-native";
 import { Content, Container, Item, Input, Icon } from "native-base";
 
 import { withNavigation } from "react-navigation";
@@ -10,19 +10,22 @@ class Salon extends Component {
   constructor() {
     super();
     this.state = {
-      dataSalon: []
+      dataSalon: [],
+      loading: false
     };
   }
 
   getDataSalon = data => {
     axios.get(Server + `api.php?operasi=salon&data=${data}`).then(res => {
       this.setState({
-        dataSalon: res.data
+        dataSalon: res.data,
+        loading: false
       });
     });
   };
 
   componentDidMount() {
+    this.setState({loading: true})
     this.getDataSalon("");
   }
 
@@ -39,36 +42,56 @@ class Salon extends Component {
           <Icon active name="md-search" />
         </Item>
         <Content>
-          <View style={styles.buttom}>
-            {this.state.dataSalon.map((data, key) => {
-              return (
-                <TouchableOpacity
-                  key={key}
-                  style={styles.buttomItem}
-                  onPress={() => {
-                    this.props.navigation.navigate("DetailSalon", {
-                      id_salon: data.id_salon,
-                      nama: data.nama,
-                      alamat: data.alamat,
-                      foto: data.foto,
-
-                      no_telp: data.no_telp
-                    });
-                  }}
-                >
-                  <View style={styles.buttomItemIner}>
-                    <Image
-                      source={{ uri: Server + "images/" + data.foto }}
-                      style={styles.image}
-                    />
-                    <Text style={{ textAlign: "center", marginTop: 10 }}>
-                      {data.nama}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+          {
+            this.state.loading ? (
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  marginTop: Dimensions.get("window").height / 3.5
+                }}
+              >
+                <Text style={{textAlign: "center"}}>Silahkan Tunggu </Text>
+      
+                <ActivityIndicator
+                  style={{ marginTop: 20 }}
+                  size="large"
+                  color="#0000ff"
+                />
+              </View>
+            ) : (
+              <View style={styles.buttom}>
+                {this.state.dataSalon.map((data, key) => {
+                  return (
+                    <TouchableOpacity
+                      key={key}
+                      style={styles.buttomItem}
+                      onPress={() => {
+                        this.props.navigation.navigate("DetailSalon", {
+                          id_salon: data.id_salon,
+                          nama: data.nama,
+                          alamat: data.alamat,
+                          foto: data.foto,
+    
+                          no_telp: data.no_telp
+                        });
+                      }}
+                    >
+                      <View style={styles.buttomItemIner}>
+                        <Image
+                          source={{ uri: Server + "images/" + data.foto }}
+                          style={styles.image}
+                        />
+                        <Text style={{ textAlign: "center", marginTop: 10 }}>
+                          {data.nama}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            )
+          }
         </Content>
       </Container>
     );

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { Image, View, TouchableOpacity } from "react-native";
+import { Image, View, TouchableOpacity, ActivityIndicator, Dimensions } from "react-native";
 import {
   Container,
   Header,
@@ -29,7 +29,8 @@ class FotoSalon extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataSalon: []
+      dataSalon: [],
+      loading: false
     };
   }
   getDataSalon = () => {
@@ -40,12 +41,14 @@ class FotoSalon extends Component {
       )
       .then(res => {
         this.setState({
-          dataSalon: res.data
+          dataSalon: res.data,
+          loading: false
         });
       });
   };
 
   componentDidMount() {
+    this.setState({ loading: true })
     this.getDataSalon();
   }
 
@@ -57,7 +60,26 @@ class FotoSalon extends Component {
         </View>
         <View style={{ flex: 2 }}>
           <Content>
-            {this.state.dataSalon.map((data, key) => {
+            
+          {
+            this.state.loading ? (
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  marginTop: Dimensions.get("window").height / 3.5
+                }}
+              >
+                <Text style={{textAlign: "center"}}>Silahkan Tunggu </Text>
+      
+                <ActivityIndicator
+                  style={{ marginTop: 20 }}
+                  size="large"
+                  color="#0000ff"
+                />
+              </View>
+            ) : (
+              this.state.dataSalon.map((data, key) => {
               return (
                 <Card key={key}>
                   <CardItem cardBody>
@@ -100,9 +122,11 @@ class FotoSalon extends Component {
                       </Text>
                     </TouchableOpacity>
                   </View>
-                </Card>
-              );
-            })}
+                </Card>    
+                        )
+                      })
+                    )
+                  }
           </Content>
         </View>
         <Fab

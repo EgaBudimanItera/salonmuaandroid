@@ -47,9 +47,8 @@ class PemesananSalon extends Component {
           `api.php?operasi=pemesanan_salon&data=${this.props.id_admin.id_admin}&status=Proses`
       )
       .then(respon => {
-        console.log(respon.data);
         this.setState({
-          Data: respon.data,
+          Data:respon.data,
           loading: false
         });
       });
@@ -78,7 +77,12 @@ class PemesananSalon extends Component {
     this.getDataKonfirmasi();
   }
 
+  // renderPesananProses = (resp) => {
+  //   return 
+  // }
+
   render() {
+    console.log(this.state.Data)
       return (
         <View style={{ flex: 1 }}>
           <View style={{ flex: 1 }}>
@@ -107,42 +111,51 @@ class PemesananSalon extends Component {
                         />
                       </View>
                     ) : (
-                      this.state.Data.map((data, key) => {
+                      Object.keys(this.state.Data).map((val, i) => {
                         return (  
-                          <List key={key}>                   
-                          <ListItem avatar>
-                            <Left>
-                              <Thumbnail
-                                source={{ uri: Server + "images/" + data.foto }}
-                              />
-                            </Left>
-                            <Body>
-                              <Text>{data.nama}</Text>
-                              <Text note>{data.alamat}</Text>
-
-                              <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                                <Icon style={{ fontSize: 13, color: "blue", textAlign: "left"}} name="calendar"/>
-                                <Text style={{ fontSize: 13, color: "blue"}}> {data.tanggal}</Text>
-                                <Text style={{ fontSize: 13, color: "blue", textAlign: "right"}}> {data.jam}</Text>
-                              </View>
-                            </Body>
-                            <Right>
-                              <Button
-                                transparent
-                                onPress={() => {
-                                  this.props.navigation.navigate(
-                                    "DetailPemesananSalon",
-                                    {
-                                      id_order: data.id_order
-                                    }
-                                  );
-                                }}
-                              >
-                                <Text style={{ color: "#000" }}>Detail</Text>
-                              </Button>
-                            </Right>
-                          </ListItem>
-                        </List>     
+                          <List key={i}>                           
+                            <ListItem itemDivider>
+                              <Text key={i} style={{ fontWeight: "bold", color: "black"}}> Tanggal {val}</Text>
+                            </ListItem> 
+                            {
+                              this.state.Data[val].map((data, key) => {
+                                return (                   
+                                  <ListItem avatar key={key+i}>
+                                    <Left>
+                                      <Thumbnail
+                                        source={{ uri: Server + "images/" + data.foto }}
+                                      />
+                                    </Left>
+                                    <Body>
+                                      <Text>{data.nama}</Text>
+                                      <Text note>{data.alamat}</Text>
+                            
+                                      <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                                        <Icon style={{ fontSize: 13, color: "blue", textAlign: "left"}} name="calendar"/>
+                                        <Text style={{ fontSize: 13, color: "blue"}}> {data.tanggal}</Text>
+                                        <Text style={{ fontSize: 13, color: "blue", textAlign: "right"}}> {data.jam}</Text>
+                                      </View>
+                                    </Body>
+                                    <Right>
+                                      <Button
+                                        transparent
+                                        onPress={() => {
+                                          this.props.navigation.navigate(
+                                            "DetailPemesananSalon",
+                                            {
+                                              id_order: data.id_order
+                                            }
+                                          );
+                                        }}
+                                      >
+                                        <Text style={{ color: "#000" }}>Detail</Text>
+                                      </Button>
+                                    </Right>
+                                  </ListItem>
+                                )
+                              })
+                            }
+                          </List>     
                         )
                       })
                     )
@@ -169,42 +182,51 @@ class PemesananSalon extends Component {
                         />
                       </View>
                     ) : (
-                      this.state.DataKonfirmasi.map((data, key) => {
+                      Object.keys(this.state.DataKonfirmasi).map((val, i) => {
                         return (  
-                          <List key={key}>                   
-                          <ListItem avatar>
-                            <Left>
-                              <Thumbnail
-                                source={{ uri: Server + "images/" + data.foto }}
-                              />
-                            </Left>
-                            <Body>
-                              <Text>{data.nama}</Text>
-                              <Text note>{data.alamat}</Text>
-
-                              <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                                <Icon style={{ fontSize: 13, color: "blue", textAlign: "left"}} name="calendar"/>
-                                <Text style={{ fontSize: 13, color: "blue"}}> {data.tanggal}</Text>
-                                <Text style={{ fontSize: 13, color: "blue", textAlign: "right"}}> {data.jam}</Text>
-                              </View>
-                            </Body>
-                            <Right>
-                              <Button
-                                transparent
-                                onPress={() => {
-                                  this.props.navigation.navigate(
-                                    "DetailPemesananSalon",
-                                    {
-                                      id_order: data.id_order
-                                    }
-                                  );
-                                }}
-                              >
-                                <Text style={{ color: "#000" }}>Detail</Text>
-                              </Button>
-                            </Right>
-                          </ListItem>
-                        </List>     
+                          <List key={i}>                           
+                            <ListItem itemDivider>
+                              <Text key={i} style={{ fontWeight: "bold", color: "black"}}> Tanggal {val}</Text>
+                            </ListItem> 
+                            {
+                              this.state.DataKonfirmasi[val].map((data, key) => {
+                                return (                   
+                                  <ListItem avatar key={key+i}>
+                                    <Left>
+                                      <Thumbnail
+                                        source={{ uri: Server + "images/" + data.foto }}
+                                      />
+                                    </Left>
+                                    <Body>
+                                      <Text>{data.nama}</Text>
+                                      <Text note>{data.alamat}</Text>
+                            
+                                      <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                                        <Icon style={{ fontSize: 13, color: "blue", textAlign: "left"}} name="calendar"/>
+                                        <Text style={{ fontSize: 13, color: "blue"}}> {data.tanggal}</Text>
+                                        <Text style={{ fontSize: 13, color: "blue", textAlign: "right"}}> {data.jam}</Text>
+                                      </View>
+                                    </Body>
+                                    <Right>
+                                      <Button
+                                        transparent
+                                        onPress={() => {
+                                          this.props.navigation.navigate(
+                                            "DetailPemesananSalon",
+                                            {
+                                              id_order: data.id_order
+                                            }
+                                          );
+                                        }}
+                                      >
+                                        <Text style={{ color: "#000" }}>Detail</Text>
+                                      </Button>
+                                    </Right>
+                                  </ListItem>
+                                )
+                              })
+                            }
+                          </List>     
                         )
                       })
                     )

@@ -423,13 +423,18 @@ case "pemesanan_salon":
 $query_tampil = mysqli_query($con,"SELECT a.*, d.* FROM tbl_order AS a
 INNER JOIN tbl_jenis_jasa AS b ON a.`id_jenis_jasa` = b.`id_jenis`
 INNER JOIN `tbl_salon` AS c ON b.`id_salon` = c.`id_salon`
-INNER JOIN tbl_pendaftaran AS d ON a.`id_pendaftar` =  d.`id_pendaftar` WHERE c.`id_salon`= '$data' AND a.`status_pesanan` ='$status'
+INNER JOIN tbl_pendaftaran AS d ON a.`id_pendaftar` =  d.`id_pendaftar` WHERE c.`id_salon`= '$data' AND a.`status_pesanan` ='$status' AND  a.tanggal >= CURDATE() ORDER BY a.tanggal ASC
  ") or die (mysqli_error($con));
 $data_array = array();
 while ($data = mysqli_fetch_assoc($query_tampil)) {
 $data_array[]=$data;
 }
-echo json_encode($data_array);
+
+$result = array();
+foreach ($data_array as $element) {
+    $result[$element['tanggal']][] = $element;
+}
+echo json_encode($result);
 
 break;
 
@@ -536,8 +541,9 @@ case "input_order":
 @$harga = $_GET['harga'];
 @$keterangan = $_GET['keterangan'];
 $query_tampil = mysqli_query($con,"insert into tbl_order (tanggal,id_jenis_jasa,id_pendaftar,keterangan,harga) value
-('$tanggal','$id_jenisjasa','$id_pendaftar','$keterangan','$harga') ") or die (mysqli_error($con));
-
+(DATE_FORMAT(STR_TO_DATE($tanggal, '%d-%m-%Y'), '%Y-%m-%d'),'$id_jenisjasa','$id_pendaftar','$keterangan','$harga') ") or die (mysqli_error($con));
+echo "insert into tbl_order (tanggal,id_jenis_jasa,id_pendaftar,keterangan,harga) value
+(DATE_FORMAT(STR_TO_DATE($tanggal, '%d-%m-%Y'), '%Y-%m-%d'),'$id_jenisjasa','$id_pendaftar','$keterangan','$harga')";
 break;
 
 case "input_pesanan":
@@ -554,8 +560,7 @@ case "input_pesanan":
 @$jam = $_GET['jam'];
 
 $query_tampil = mysqli_query($con,"INSERT tbl_order (tanggal,id_jenis_jasa,id_pendaftar,harga,jml_harga,lat_user,lng_user,status,biaya_transportasi,jam) VALUES
-('$tanggal','$id_jenisjasa','$id_pendaftar','$harga','$jml_harga','$lat_user','$lng_user','$status','$biaya_transportasi','$jam') ") or die (mysqli_error($con));
-
+(DATE_FORMAT(STR_TO_DATE('$tanggal', '%d-%m-%Y'), '%Y-%m-%d'),'$id_jenisjasa','$id_pendaftar','$harga','$jml_harga','$lat_user','$lng_user','$status','$biaya_transportasi','$jam') ") or die (mysqli_error($con));
 break;
 
 case "input_salon_terdekat":

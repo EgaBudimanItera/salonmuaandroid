@@ -1,8 +1,8 @@
 <?php 
 $server = "localhost";
-$username = "smar8971_salon";
+$username = "db_salon_rn";
 $password = "salon1234567890";
-$database = "smar8971_salon";
+$database = "db_salon_rn";
 $con = mysqli_connect($server, $username, $password) ;
 mysqli_select_db($con, $database) or die("<h1>Koneksi Kedatabase Error : </h1>" . mysqli_error($con));
 mysqli_set_charset($con,"utf8");

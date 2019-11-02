@@ -1,6 +1,6 @@
 /*
 SQLyog Professional v12.4.3 (64 bit)
-MySQL - 10.1.34-MariaDB : Database - smar8971_salon
+MySQL - 10.1.34-MariaDB : Database - db_salon_rn
 *********************************************************************
 */
 
@@ -12,9 +12,9 @@ MySQL - 10.1.34-MariaDB : Database - smar8971_salon
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`smar8971_salon` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`db_salon_rn` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
-USE `smar8971_salon`;
+USE `db_salon_rn`;
 
 /*Table structure for table `tbl_galeri` */
 

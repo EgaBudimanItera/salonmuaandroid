@@ -2,7 +2,7 @@
   $dbhost = 'localhost';
   $dbuser = 'root';     // ini berlaku di xampp
   $dbpass = '';         // ini berlaku di xampp
-  $dbname = 'smar8971_salon'; //nama databae
+  $dbname = 'db_salon_rn'; //nama databae
 
   // melakukan koneksi ke database
   $conn = mysqli_connect($dbhost,$dbuser,$dbpass,$dbname);

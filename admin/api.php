@@ -2,7 +2,7 @@
 $server = "localhost";
 $username = "root";
 $password = "";
-$database = "smar8971_salon";
+$database = "db_salon_rn";
 $con = mysqli_connect($server, $username, $password) ;
 mysqli_select_db($con, $database) or die("<h1>Koneksi Kedatabase Error : </h1>" . mysqli_error($con));
 mysqli_set_charset($con,"utf8");
@@ -152,6 +152,7 @@ if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
     $no_telp = $_POST['no_telp'];
     $email = $_POST['email'];
     $username = $_POST['username'];
+    $kategori = $_POST['kategori'];
     $password = $_POST['password'];
     $alamat = $_POST['alamat'];
     $pemilik = $_POST['pemilik'];
@@ -165,8 +166,8 @@ if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
     }
     $query = mysqli_query($con,"insert into tbl_user (id_admin,nama,no_telp,email,password,username,level) values ('$id_user',
     '$nama','$no_telp','$email','$password','$username','salon') ") or die (mysqli_error($con));
-    $query2 = mysqli_query($con,"insert into tbl_salon (id_salon,nama,alamat,no_telp,email,foto,pemilik,lat,lng) values ('$id_user',
-    '$nama','$alamat','$no_telp','$email','$foto','$pemilik','$lat','$long') ");
+    $query2 = mysqli_query($con,"insert into tbl_salon (id_salon,nama,alamat,no_telp,email,foto,pemilik,lat,lng,kategori) values ('$id_user',
+    '$nama','$alamat','$no_telp','$email','$foto','$pemilik','$lat','$long','$kategori') ");
 
     mysqli_query($con,"insert into tbl_galeri (id_salon,foto_galeri,id_pelanggan,status_galeri) values ('$id_user',
    '$foto','0','foto salon') ");
@@ -302,7 +303,8 @@ else {
 
 case "salon":
 @$data = $_GET['data'];
-$query_tampil = mysqli_query($con,"select * from tbl_salon where nama like '%$data%' ") or die (mysqli_error($con));
+$query_tampil = mysqli_query($con,"SELECT a.*, b.`jumlah_rating` FROM tbl_salon AS a
+left JOIN tbl_rating AS b ON a.`id_salon`=b.`id_salon` where a.nama like '%$data%' GROUP BY a.id_salon ORDER BY b.jumlah_rating DESC ") or die (mysqli_error($con));
 $data_array = array();
 while ($data = mysqli_fetch_assoc($query_tampil)) {
 $data_array[]=$data;
@@ -313,8 +315,9 @@ break;
 
 case "show_rating":
 @$data = $_GET['data'];
+@$kategori = $_GET['kategori'];
 $query_tampil = mysqli_query($con,"SELECT a.*, b.`jumlah_rating` FROM tbl_salon AS a
-left JOIN tbl_rating AS b ON a.`id_salon`=b.`id_salon` where a.nama like '%$data%' GROUP BY a.id_salon ") or die (mysqli_error($con));
+left JOIN tbl_rating AS b ON a.`id_salon`=b.`id_salon` where a.nama like '%$data%' AND kategori = '$kategori' GROUP BY a.id_salon ORDER BY b.jumlah_rating DESC ") or die (mysqli_error($con));
 $data_array = array();
 while ($data = mysqli_fetch_assoc($query_tampil)) {
 $data_array[]=$data;
@@ -405,7 +408,8 @@ break;
 
 case "konfirmasi_pesanan":
 @$data = $_GET['data'];
-$query_tampil = mysqli_query($con,"UPDATE tbl_order SET status_pesanan='Pesanan Di Konfirmasi Salon' WHERE `id_order`='$data' ") or die (mysqli_error($con));
+@$nama = $_GET['nama'];
+$query_tampil = mysqli_query($con,"UPDATE tbl_order SET status_pesanan='Pesanan Di Konfirmasi Salon', perias='$nama' WHERE `id_order`='$data' ") or die (mysqli_error($con));
 
 echo json_encode("sukses");
 
@@ -415,10 +419,11 @@ break;
 
 case "pemesanan_salon":
 @$data = $_GET['data'];
+@$status = $_GET['status'];
 $query_tampil = mysqli_query($con,"SELECT a.*, d.* FROM tbl_order AS a
 INNER JOIN tbl_jenis_jasa AS b ON a.`id_jenis_jasa` = b.`id_jenis`
 INNER JOIN `tbl_salon` AS c ON b.`id_salon` = c.`id_salon`
-INNER JOIN tbl_pendaftaran AS d ON a.`id_pendaftar` =  d.`id_pendaftar` WHERE c.`id_salon`= '$data'
+INNER JOIN tbl_pendaftaran AS d ON a.`id_pendaftar` =  d.`id_pendaftar` WHERE c.`id_salon`= '$data' AND a.`status_pesanan` ='$status'
  ") or die (mysqli_error($con));
 $data_array = array();
 while ($data = mysqli_fetch_assoc($query_tampil)) {
@@ -466,10 +471,11 @@ break;
 
 case "show_historipesanan":
 @$data = $_GET['data'];
+@$status = $_GET['status'];
 
 $query_tampil = mysqli_query($con,"select * from tbl_order as a
 inner join tbl_jenis_jasa as b on a.`id_jenis_jasa` = b.`id_jenis`
-inner join tbl_salon as c on c.`id_salon` = b.`id_salon` where id_pendaftar = '$data' ") or die (mysqli_error($con));
+inner join tbl_salon as c on c.`id_salon` = b.`id_salon` where id_pendaftar = '$data' AND a.status_pesanan='$status' ORDER BY id_order DESC ") or die (mysqli_error($con));
 $data_array = array();
 while ($data = mysqli_fetch_assoc($query_tampil)) {
 $data_array[]=$data;

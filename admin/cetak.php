@@ -2,7 +2,7 @@
 $server = "localhost";
 $username = "root";
 $password = "";
-$database = "smar8971_salon";
+$database = "db_salon_rn";
 
 
 $conn = mysqli_connect($server, $username, $password) ;

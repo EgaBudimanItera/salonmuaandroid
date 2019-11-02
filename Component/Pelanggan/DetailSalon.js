@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity, Image, Dimensions } from "react-native";
+import { View, TouchableOpacity, Image, Dimensions, Alert } from "react-native";
 
 import HeaderPelanggan from "./HeaderPelanggan";
 const haversine = require("haversine");
@@ -40,7 +40,10 @@ var alamat = "";
 var foto = "";
 var no_telp = "";
 var distance = 0;
+var biaya_transportasi = "";
+var biaya_transportasi_old = "";
 var totalHarga = "";
+var totalHarga_old = "";
 var comHarga = "";
 var hargaJasa = "";
 var lat_sekarang = "";
@@ -83,7 +86,8 @@ class DetailSalon extends Component {
       lat_user: null,
       lng_user: null,
       biaya: 0,
-      biaya_trans: 0
+      biaya_trans: 0,
+      loading: false
     };
   }
   onValuejasaMakeup(value: string) {
@@ -97,8 +101,16 @@ class DetailSalon extends Component {
 
   onValueStatus(value: string) {
     this.setState({
-      status: value
+      status: value,
     });
+
+    if (value == "Datang Ke Tempat") {
+      biaya_transportasi = 0
+      totalHarga = hargaJasa
+    } else {
+      biaya_transportasi = biaya_transportasi_old
+      totalHarga = totalHarga_old
+    }
   }
 
   getDataSalon = () => {
@@ -144,6 +156,7 @@ class DetailSalon extends Component {
   };
 
   getDetailSalon = jasa => {
+    this.setState({ loading: true })
     axios
       .get(
         Server +
@@ -188,16 +201,21 @@ class DetailSalon extends Component {
 
             comHarga = distance / 1000;
 
-            if (Math.round(comHarga) < 4) {
-              totalHarga = 20000 + hargaJasa * 0.1;
+            if (Math.round(comHarga) <= 1) {
+              biaya_transportasi = 8000;
+              biaya_transportasi_old = 8000;
             } else {
-              totalHarga = 4000 * Math.round(comHarga) + hargaJasa * 0.1;
+              biaya_transportasi = 8000 * Math.round(comHarga);
+              biaya_transportasi_old = 8000 * Math.round(comHarga);
             }
+            totalHarga = (Number(biaya_transportasi) + Number(hargaJasa))
+            totalHarga_old = (Number(biaya_transportasi) + Number(hargaJasa))
 
             this.setState({
               lat_user: position.coords.latitude,
               lng_user: position.coords.longitude
             });
+            this.setState({ loading: false })
           },
           error => this.setState({ error: error.message }),
           { enableHighAccuracy: false, timeout: 200000, maximumAge: 1000 }
@@ -221,6 +239,17 @@ class DetailSalon extends Component {
     this.hideDateTimePicker();
   };
 
+  alertPesan() {
+    Alert.alert(
+      'Peringatan',
+      'Mohon Tunggu, Sedang Melakukan Penghitungan Total Akhir.',
+      [
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ],
+      {cancelable: false},
+    );
+  }
+
   pesanSalon() {
     if (totalHarga === "") {
       alert("Silahkan Tunggu Sedang Mencari Biaya Transportasi");
@@ -239,7 +268,7 @@ class DetailSalon extends Component {
           "harga jasa = " +
           hargaJasa +
           " jumlah_harga = " +
-          (parseInt(hargaJasa) + parseInt(totalHarga)) +
+          totalHarga +
           "lat user = " +
           this.state.lat_user +
           "lng User = " +
@@ -247,17 +276,17 @@ class DetailSalon extends Component {
           " Status " +
           this.state.status +
           "biaya transportasi = " +
-          totalHarga +
+          biaya_transportasi +
           "jam = " +
           this.state.jam.toString().substr(15, 9)
       );
 
       var compareHarga = "";
       if (this.state.status === "Datang Ke Tempat") {
-        compareHarga = hargaJasa;
-        totalHarga = 0;
+        compareHarga = totalHarga;
+        biaya_transportasi = 0;
       } else {
-        compareHarga = parseInt(hargaJasa) + parseInt(totalHarga);
+        compareHarga = totalHarga;
       }
 
       axios
@@ -271,7 +300,7 @@ class DetailSalon extends Component {
     &lat_user=${this.state.lat_user}
     &lng_user=${this.state.lng_user}
     &status=${this.state.status}
-    &biaya_transportasi=${totalHarga}
+    &biaya_transportasi=${biaya_transportasi}
     &jam=${this.state.jam.toString().substr(15, 9)}`
         )
         .then(() => {
@@ -365,7 +394,7 @@ class DetailSalon extends Component {
               {this.state.detailSalon.map((data, key) => {
                 // console.log(data);
                 hargaJasa = data.harga;
-                totalHarga = totalHarga + hargaJasa * 0.1;
+                // totalHarga = totalHarga + hargaJasa * 0.1;
                 return (
                   <View key={key}>
                     <Text style={{ paddingLeft: 15, paddingTop: 5 }}>
@@ -474,10 +503,47 @@ class DetailSalon extends Component {
                 )}
                 {this.state.lat_user !== null && (
                   <Text style={{ flex: 1.8, color: "blue" }}>
-                    : Rp. {currencyFormat(parseFloat(totalHarga))}
+                    : Rp. {currencyFormat(parseFloat(biaya_transportasi))}
                   </Text>
                 )}
               </View>
+
+              {/* Total Akhir */}              
+              <View
+                style={{
+                  flexDirection: "row",
+                  paddingTop: 20,
+                  paddingLeft: 10
+                }}
+              >
+                <View>
+                  <Text style={{ flex: 1, paddingLeft: 5 }}>
+                    Total
+                  </Text>
+
+                  <Text
+                    style={{ flex: 1, fontSize: 10, paddingLeft: 5 }}
+                    note
+                    numberOfLines={1}
+                  >
+                    Estimasi Jarak : {Math.round(comHarga)} Km
+                  </Text>
+                </View>
+                {
+                  this.state.lat_user === null || this.state.loading ?
+                  (
+                    <Text style={{ flex: 1.8, fontSize: 14, color: "blue" }}>
+                      {" "}
+                      : Menghitung Total
+                    </Text>
+                  ) : (
+                    <Text style={{ flex: 1.8, color: "blue" }}>
+                      : Rp. {currencyFormat(parseFloat(totalHarga))}
+                    </Text>
+                  )
+                }
+              </View>
+              {/* Total Akhir */}
 
               <View
                 style={{
@@ -503,6 +569,7 @@ class DetailSalon extends Component {
                     format="DD-MM-YYYY"
                     confirmBtnText="Confirm"
                     cancelBtnText="Cancel"
+                    minDate={new Date()}
                     customStyles={{
                       dateIcon: {
                         position: "absolute",
@@ -558,19 +625,39 @@ class DetailSalon extends Component {
                 </View>
               </View>
             </Form>
-            <Button
-              full
-              info
-              onPress={this.pesanSalon.bind(this)}
-              style={{
-                marginLeft: 10,
-                marginBottom: 10,
-                marginRight: 10,
-                borderRadius: 10
-              }}
-            >
-              <Text>Pesan Sekarang</Text>
-            </Button>
+            
+            {
+              this.state.lat_user === null || this.state.loading ?
+              (
+                <Button
+                  full
+                  info
+                  onPress={this.alertPesan.bind(this)}
+                  style={{
+                    marginLeft: 10,
+                    marginBottom: 10,
+                    marginRight: 10,
+                    borderRadius: 10
+                  }}
+                >
+                  <Text>Pesan Sekarang</Text>
+                </Button>
+              ) : (
+                <Button
+                  full
+                  info
+                  onPress={this.pesanSalon.bind(this)}
+                  style={{
+                    marginLeft: 10,
+                    marginBottom: 10,
+                    marginRight: 10,
+                    borderRadius: 10
+                  }}
+                >
+                  <Text>Pesan Sekarang</Text>
+                </Button>
+              )
+            }
           </Content>
           <Fab
             direction="up"

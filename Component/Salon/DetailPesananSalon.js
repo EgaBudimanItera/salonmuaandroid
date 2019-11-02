@@ -5,7 +5,10 @@ import {
   Content,
   Card,
   CardItem,
-  Thumbnail,
+  Form,
+  Item,
+  Label,
+  Input,
   Text,
   Button,
   Fab,
@@ -43,7 +46,8 @@ class DetailPesananSalon extends Component {
       dataPemesanan: [],
       harga: 0,
       transportasi: 0,
-      total: 0
+      total: 0,
+      nama: ""
     };
   }
 
@@ -69,12 +73,16 @@ class DetailPesananSalon extends Component {
   };
 
   konfirmasipesanan = () => {
-    axios
-      .get(Server + `api.php?operasi=konfirmasi_pesanan&data=${id_order}`)
-      .then(() => {
-        alert("Anda Telah Mengkonfirmasi Pesanan !!");
-        this.props.navigation.navigate("MenuUtamaSalon");
-      });
+    if (this.state.nama == "") {
+      alert("Nama Perias Harus Diisi !")
+    } else {
+      axios
+        .get(Server + `api.php?operasi=konfirmasi_pesanan&data=${id_order}&nama=${this.state.nama}`)
+        .then(() => {
+          alert("Anda Telah Mengkonfirmasi Pesanan !!");
+          this.props.navigation.navigate("MenuUtamaSalon");
+        });
+    }
   };
 
   handleGetDirections = () => {
@@ -192,6 +200,31 @@ class DetailPesananSalon extends Component {
                     </Body>
                   </Left>
                 </CardItem>
+              
+                {
+                  data.status_pesanan === "Proses" ? (
+                    <Form>
+                      <Item floatingLabel last>
+                        <Label>Nama Perias</Label>
+                        <Input
+                          style={{width: 100}}
+                          multiline={true} numberOfLines={5}
+                          value={this.state.nama}
+                          onChangeText={text => this.setState({ nama: text })}
+                        />
+                      </Item>
+                    </Form>
+                  ) : (                    
+                  <CardItem>
+                    <Left>
+                      <Text> Perias : </Text>
+                    </Left>
+                    <Right>
+                        <Text>{data.perias}</Text>
+                    </Right>
+                  </CardItem>
+                  )
+                }
 
                 <CardItem>
                   <Left>

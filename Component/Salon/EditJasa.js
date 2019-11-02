@@ -133,6 +133,7 @@ class EditJasa extends Component {
             <Item floatingLabel last>
               <Label>Keterangan (Include)</Label>
               <Input
+                multiline={true} numberOfLines={5}
                 value={this.state.keterangan}
                 onChangeText={text => this.setState({ keterangan: text })}
               />

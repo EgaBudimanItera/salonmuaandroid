@@ -8,8 +8,10 @@ import {
   Text,
   PermissionsAndroid
 } from "react-native";
+import { Tab, Tabs } from 'native-base';
 import Headers from "./Container/Headers";
 import ImageSlider from "react-native-image-slider";
+import Mua from "./Mua";
 import Salon from "./Salon";
 import AsyncStorage from "@react-native-community/async-storage";
 import { connect } from "react-redux";
@@ -110,8 +112,14 @@ class MenuUtama extends Component {
         </View>
 
         <View style={{ flex: 2 }}>
-          <Text style={{ marginLeft: 20 }}>Salon</Text>
-          <Salon />
+          <Tabs>
+            <Tab heading="Salon">
+              <Salon />
+            </Tab>
+            <Tab heading="Makeup Artis">
+              <Mua />
+            </Tab>
+          </Tabs>
         </View>
       </View>
     );

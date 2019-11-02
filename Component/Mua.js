@@ -29,7 +29,7 @@ import Server from "./Server";
 
 import { withNavigation } from "react-navigation";
 
-class Salon extends Component {
+class Mua extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       header: null
@@ -43,7 +43,7 @@ class Salon extends Component {
   }
 
   getDatarating = data => {
-    axios.get(Server + `api.php?operasi=show_rating&data=${data}&kategori=salon`).then(res => {
+    axios.get(Server + `api.php?operasi=show_rating&data=${data}&kategori=mua`).then(res => {
       this.setState({
         dataRating: res.data
       });
@@ -55,26 +55,6 @@ class Salon extends Component {
   }
 
   render() {
-    // if (this.state.dataRating.length === 0) {
-    //   return (
-    //     <View
-    //       style={{
-    //         flex: 1,
-    //         alignItems: "center",
-    //         marginTop: Dimensions.get("window").height / 3.5
-    //       }}
-    //     >
-    //       <Text style={{ textAlign: "center" }}>Loading ... </Text>
-    //
-    //       <ActivityIndicator
-    //         style={{ marginTop: 20 }}
-    //         size="large"
-    //         color="#0000ff"
-    //       />
-    //     </View>
-    //   );
-    // }
-
     return (
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
@@ -135,4 +115,4 @@ class Salon extends Component {
     );
   }
 }
-export default withNavigation(Salon);
+export default withNavigation(Mua);

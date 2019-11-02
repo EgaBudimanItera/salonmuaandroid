@@ -15,7 +15,7 @@ import {
   Item,
   Label,
   Input,
-  Button,
+  Picker,
   Text
 } from "native-base";
 
@@ -43,6 +43,7 @@ class RegistrasiSalon extends Component {
       username: "",
       password: "",
       nama: "",
+      kategori: "",
       alamat: "",
       no_telp: "",
       email: "",
@@ -71,9 +72,12 @@ class RegistrasiSalon extends Component {
       alert("Silahka Lengkapi Data Anda");
     } else if (this.state.longitude === null && this.state.latitude === null) {
       alert("Lokasi Anda Belum Di Temukan Silahkan Tunggu !!!");
+    } else if (this.state.kategori === "") {
+      alert("Silakan Pilih Kategori !!!");
     } else {
       const data = new FormData();
       data.append("nama", this.state.nama);
+      data.append("kategori", this.state.kategori);
       data.append("no_telp", this.state.no_telp);
       data.append("email", this.state.email);
       data.append("username", this.state.username);
@@ -137,6 +141,7 @@ class RegistrasiSalon extends Component {
       username: "",
       password: "",
       nama: "",
+      kategori: "",
       alamat: "",
       no_telp: "",
       email: "",
@@ -149,6 +154,12 @@ class RegistrasiSalon extends Component {
   componentDidMount() {
     this.bersih();
     this.getLocation();
+  }
+  
+  onValueKategori(value: string) {
+    this.setState({
+      kategori: value
+    });
   }
 
   selectPhotoTapped() {
@@ -232,6 +243,19 @@ class RegistrasiSalon extends Component {
                   onChangeText={text => this.setState({ alamat: text })}
                   value={this.state.alamat}
                 />
+              </Item>              
+              <Item picker style={{ paddingLeft: 5, paddingTop: 20 }}>
+                <Picker
+                  mode="dropdown"
+                  selectedValue={this.state.kategori}
+                  onValueChange={this.onValueKategori.bind(this)}
+                  style={{color: "#555555", fontWeight: 400}}
+                >                  
+                  <Picker.Item label="Pilih Kategori" value="" /> 
+                  <Picker.Item label="Salon" value="salon" /> 
+                  <Picker.Item label="Makeup Artis" value="mua" /> 
+                </Picker>
+                {/* <Picker.Item label="Salon" value="salon" /> </Picker> */}
               </Item>
               <Item floatingLabel>
                 <Label>No Telfon</Label>

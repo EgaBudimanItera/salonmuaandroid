@@ -64,7 +64,7 @@ class HeaderPelanggan extends Component {
                   source={require("../../assets/daftar.png")}
                 />
                 <View style={styles.garisHeader} />
-                <Text style={{ fontSize: 14 }}>Daftar Salon</Text>
+                <Text style={{ fontSize: 14 }}>Daftar Salon / Mua</Text>
               </View>
             </TouchableOpacity>
 

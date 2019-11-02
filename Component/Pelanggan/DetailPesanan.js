@@ -148,6 +148,15 @@ class DetailPesanan extends Component {
                       </Text>
                     </Button>
                   </Body>
+                </CardItem> 
+                
+                <CardItem>
+                  <Left>
+                    <Text> Perias : </Text>
+                  </Left>
+                  <Right>
+                      <Text>{data.perias}</Text>
+                  </Right>
                 </CardItem>
 
                 <View
